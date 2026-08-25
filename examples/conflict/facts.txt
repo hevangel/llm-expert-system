@@ -1,0 +1,3 @@
+fact: operational(pump_1)
+fact: !operational(pump_1)
+fact: located(pump_1, plant_a)

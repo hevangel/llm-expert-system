@@ -1,0 +1,9 @@
+{
+  "domain": "meeting scheduling",
+  "facts": [
+    "fact: available(alice, monday)",
+    "fact: available(bob, monday)",
+    "fact: room_capacity(blue_room, 10)"
+  ],
+  "question": "Choose a time and room satisfying availability and capacity constraints."
+}

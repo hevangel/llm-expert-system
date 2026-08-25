@@ -1,0 +1,215 @@
+{
+  "$defs": {
+    "Capability": {
+      "enum": [
+        "relational",
+        "forward_chaining",
+        "constraint",
+        "optimization",
+        "planning",
+        "non_monotonic"
+      ],
+      "title": "Capability",
+      "type": "string"
+    },
+    "Engine": {
+      "enum": [
+        "prolog",
+        "clips",
+        "z3",
+        "clingo"
+      ],
+      "title": "Engine",
+      "type": "string"
+    },
+    "ResultStatus": {
+      "enum": [
+        "answered",
+        "unknown",
+        "unsat",
+        "abstained",
+        "error",
+        "timeout"
+      ],
+      "title": "ResultStatus",
+      "type": "string"
+    },
+    "RoutingPlan": {
+      "additionalProperties": false,
+      "properties": {
+        "fallback": {
+          "default": "abstain",
+          "enum": [
+            "abstain",
+            "unknown"
+          ],
+          "title": "Fallback",
+          "type": "string"
+        },
+        "policy_validated": {
+          "default": true,
+          "title": "Policy Validated",
+          "type": "boolean"
+        },
+        "rationale": {
+          "maxLength": 1000,
+          "title": "Rationale",
+          "type": "string"
+        },
+        "steps": {
+          "items": {
+            "$ref": "#/$defs/RoutingStep"
+          },
+          "maxItems": 8,
+          "minItems": 1,
+          "title": "Steps",
+          "type": "array"
+        }
+      },
+      "required": [
+        "steps",
+        "rationale"
+      ],
+      "title": "RoutingPlan",
+      "type": "object"
+    },
+    "RoutingStep": {
+      "additionalProperties": false,
+      "properties": {
+        "capability": {
+          "$ref": "#/$defs/Capability"
+        },
+        "depends_on": {
+          "default": [],
+          "items": {
+            "pattern": "^[a-z][a-z0-9_]{0,63}$",
+            "type": "string"
+          },
+          "title": "Depends On",
+          "type": "array"
+        },
+        "engine": {
+          "$ref": "#/$defs/Engine"
+        },
+        "id": {
+          "pattern": "^[a-z][a-z0-9_]{0,63}$",
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "engine",
+        "capability"
+      ],
+      "title": "RoutingStep",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "bindings": {
+      "default": [],
+      "items": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "title": "Bindings",
+      "type": "array"
+    },
+    "conflict_ids": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Conflict Ids",
+      "type": "array"
+    },
+    "diagnostics": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Diagnostics",
+      "type": "array"
+    },
+    "engine": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Engine"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "knowledge_ids": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Knowledge Ids",
+      "type": "array"
+    },
+    "models": {
+      "default": [],
+      "items": {
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "title": "Models",
+      "type": "array"
+    },
+    "objective": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "integer"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Objective"
+    },
+    "proof": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Proof",
+      "type": "array"
+    },
+    "route": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/RoutingPlan"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "status": {
+      "$ref": "#/$defs/ResultStatus"
+    }
+  },
+  "required": [
+    "status"
+  ],
+  "title": "ReasoningResult",
+  "type": "object"
+}

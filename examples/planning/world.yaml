@@ -1,0 +1,6 @@
+domain: package_delivery
+facts:
+  - "fact: at(robot, depot)"
+  - "fact: connected(depot, station)"
+  - "fact: package_at(parcel_1, depot)"
+goal: "Deliver parcel_1 to station while respecting connectivity and action ordering."

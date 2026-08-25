@@ -1,0 +1,809 @@
+{
+  "$defs": {
+    "Atom": {
+      "additionalProperties": false,
+      "properties": {
+        "arguments": {
+          "default": [],
+          "items": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "boolean"
+              }
+            ]
+          },
+          "maxItems": 16,
+          "title": "Arguments",
+          "type": "array"
+        },
+        "negated": {
+          "default": false,
+          "title": "Negated",
+          "type": "boolean"
+        },
+        "predicate": {
+          "pattern": "^[a-z][a-z0-9_]{0,63}$",
+          "title": "Predicate",
+          "type": "string"
+        }
+      },
+      "required": [
+        "predicate"
+      ],
+      "title": "Atom",
+      "type": "object"
+    },
+    "Capability": {
+      "enum": [
+        "relational",
+        "forward_chaining",
+        "constraint",
+        "optimization",
+        "planning",
+        "non_monotonic"
+      ],
+      "title": "Capability",
+      "type": "string"
+    },
+    "Confidence": {
+      "additionalProperties": false,
+      "properties": {
+        "rationale": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rationale"
+        },
+        "score": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Score",
+          "type": "number"
+        }
+      },
+      "required": [
+        "score"
+      ],
+      "title": "Confidence",
+      "type": "object"
+    },
+    "ConflictRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "affected_predicates": {
+          "items": {
+            "pattern": "^[a-z][a-z0-9_]{0,63}$",
+            "type": "string"
+          },
+          "title": "Affected Predicates",
+          "type": "array"
+        },
+        "category": {
+          "enum": [
+            "opposite_facts",
+            "incompatible_conclusions",
+            "unsatisfiable",
+            "ambiguous_definition",
+            "cross_engine_disagreement"
+          ],
+          "title": "Category",
+          "type": "string"
+        },
+        "evidence": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/EvidenceRef"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "item_ids": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 2,
+          "title": "Item Ids",
+          "type": "array"
+        },
+        "resolution_note": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Resolution Note"
+        },
+        "resolved": {
+          "default": false,
+          "title": "Resolved",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "category",
+        "item_ids",
+        "affected_predicates"
+      ],
+      "title": "ConflictRecord",
+      "type": "object"
+    },
+    "Constraint": {
+      "additionalProperties": false,
+      "properties": {
+        "confidence": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Confidence"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "engine_hints": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/EngineHint"
+          },
+          "title": "Engine Hints",
+          "type": "array"
+        },
+        "evidence": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/EvidenceRef"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "expression": {
+          "$ref": "#/$defs/Expression"
+        },
+        "id": {
+          "pattern": "^[a-z][a-z0-9_]{0,63}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "state": {
+          "$ref": "#/$defs/KnowledgeItemState",
+          "default": "proposed"
+        },
+        "system_axiom": {
+          "default": false,
+          "title": "System Axiom",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "expression"
+      ],
+      "title": "Constraint",
+      "type": "object"
+    },
+    "Engine": {
+      "enum": [
+        "prolog",
+        "clips",
+        "z3",
+        "clingo"
+      ],
+      "title": "Engine",
+      "type": "string"
+    },
+    "EngineHint": {
+      "additionalProperties": false,
+      "properties": {
+        "capability": {
+          "$ref": "#/$defs/Capability"
+        },
+        "engine": {
+          "$ref": "#/$defs/Engine"
+        },
+        "rationale": {
+          "maxLength": 500,
+          "title": "Rationale",
+          "type": "string"
+        }
+      },
+      "required": [
+        "engine",
+        "capability",
+        "rationale"
+      ],
+      "title": "EngineHint",
+      "type": "object"
+    },
+    "Entity": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/EvidenceRef"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "id": {
+          "pattern": "^[a-z][a-z0-9_]{0,63}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "label": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "type": {
+          "default": "entity",
+          "pattern": "^[a-z][a-z0-9_]{0,63}$",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "label"
+      ],
+      "title": "Entity",
+      "type": "object"
+    },
+    "EvidenceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "document_id": {
+          "title": "Document Id",
+          "type": "string"
+        },
+        "excerpt": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Excerpt"
+        },
+        "excerpt_hash": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Excerpt Hash",
+          "type": "string"
+        },
+        "locator": {
+          "title": "Locator",
+          "type": "string"
+        }
+      },
+      "required": [
+        "document_id",
+        "locator",
+        "excerpt_hash"
+      ],
+      "title": "EvidenceRef",
+      "type": "object"
+    },
+    "ExprOp": {
+      "enum": [
+        "literal",
+        "variable",
+        "and",
+        "or",
+        "not",
+        "eq",
+        "ne",
+        "lt",
+        "le",
+        "gt",
+        "ge",
+        "add",
+        "sub",
+        "mul",
+        "div",
+        "implies"
+      ],
+      "title": "ExprOp",
+      "type": "string"
+    },
+    "Expression": {
+      "additionalProperties": false,
+      "properties": {
+        "args": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Expression"
+          },
+          "title": "Args",
+          "type": "array"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z][a-z0-9_]{0,63}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "op": {
+          "$ref": "#/$defs/ExprOp"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Value"
+        }
+      },
+      "required": [
+        "op"
+      ],
+      "title": "Expression",
+      "type": "object"
+    },
+    "Fact": {
+      "additionalProperties": false,
+      "properties": {
+        "atom": {
+          "$ref": "#/$defs/Atom"
+        },
+        "confidence": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Confidence"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "engine_hints": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/EngineHint"
+          },
+          "title": "Engine Hints",
+          "type": "array"
+        },
+        "evidence": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/EvidenceRef"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "id": {
+          "pattern": "^[a-z][a-z0-9_]{0,63}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "state": {
+          "$ref": "#/$defs/KnowledgeItemState",
+          "default": "proposed"
+        },
+        "system_axiom": {
+          "default": false,
+          "title": "System Axiom",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "atom"
+      ],
+      "title": "Fact",
+      "type": "object"
+    },
+    "GoalTemplate": {
+      "additionalProperties": false,
+      "properties": {
+        "capabilities": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Capability"
+          },
+          "title": "Capabilities",
+          "type": "array"
+        },
+        "confidence": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Confidence"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "engine_hints": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/EngineHint"
+          },
+          "title": "Engine Hints",
+          "type": "array"
+        },
+        "evidence": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/EvidenceRef"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "id": {
+          "pattern": "^[a-z][a-z0-9_]{0,63}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "parameters": {
+          "default": [],
+          "items": {
+            "pattern": "^[a-z][a-z0-9_]{0,63}$",
+            "type": "string"
+          },
+          "title": "Parameters",
+          "type": "array"
+        },
+        "predicate": {
+          "pattern": "^[a-z][a-z0-9_]{0,63}$",
+          "title": "Predicate",
+          "type": "string"
+        },
+        "state": {
+          "$ref": "#/$defs/KnowledgeItemState",
+          "default": "proposed"
+        },
+        "system_axiom": {
+          "default": false,
+          "title": "System Axiom",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "predicate"
+      ],
+      "title": "GoalTemplate",
+      "type": "object"
+    },
+    "KnowledgeItemState": {
+      "enum": [
+        "proposed",
+        "accepted",
+        "conflicted",
+        "rejected",
+        "superseded"
+      ],
+      "title": "KnowledgeItemState",
+      "type": "string"
+    },
+    "Relation": {
+      "additionalProperties": false,
+      "properties": {
+        "argument_types": {
+          "default": [],
+          "items": {
+            "pattern": "^[a-z][a-z0-9_]{0,63}$",
+            "type": "string"
+          },
+          "title": "Argument Types",
+          "type": "array"
+        },
+        "arity": {
+          "maximum": 16,
+          "minimum": 1,
+          "title": "Arity",
+          "type": "integer"
+        },
+        "evidence": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/EvidenceRef"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "id": {
+          "pattern": "^[a-z][a-z0-9_]{0,63}$",
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "arity"
+      ],
+      "title": "Relation",
+      "type": "object"
+    },
+    "Rule": {
+      "additionalProperties": false,
+      "properties": {
+        "confidence": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Confidence"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "engine_hints": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/EngineHint"
+          },
+          "title": "Engine Hints",
+          "type": "array"
+        },
+        "evidence": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/EvidenceRef"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "id": {
+          "pattern": "^[a-z][a-z0-9_]{0,63}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "priority": {
+          "default": 0,
+          "maximum": 1000,
+          "minimum": -1000,
+          "title": "Priority",
+          "type": "integer"
+        },
+        "state": {
+          "$ref": "#/$defs/KnowledgeItemState",
+          "default": "proposed"
+        },
+        "system_axiom": {
+          "default": false,
+          "title": "System Axiom",
+          "type": "boolean"
+        },
+        "then": {
+          "$ref": "#/$defs/Atom"
+        },
+        "when": {
+          "items": {
+            "$ref": "#/$defs/Atom"
+          },
+          "maxItems": 64,
+          "minItems": 1,
+          "title": "When",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "when",
+        "then"
+      ],
+      "title": "Rule",
+      "type": "object"
+    },
+    "SourceDocument": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "imported_at": {
+          "format": "date-time",
+          "title": "Imported At",
+          "type": "string"
+        },
+        "media_type": {
+          "enum": [
+            "text/markdown",
+            "text/plain",
+            "application/json",
+            "application/yaml"
+          ],
+          "title": "Media Type",
+          "type": "string"
+        },
+        "parser_version": {
+          "default": "1",
+          "title": "Parser Version",
+          "type": "string"
+        },
+        "relative_path": {
+          "title": "Relative Path",
+          "type": "string"
+        },
+        "sections": {
+          "items": {
+            "$ref": "#/$defs/SourceSection"
+          },
+          "title": "Sections",
+          "type": "array"
+        },
+        "sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "relative_path",
+        "media_type",
+        "sha256",
+        "sections"
+      ],
+      "title": "SourceDocument",
+      "type": "object"
+    },
+    "SourceSection": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "locator": {
+          "title": "Locator",
+          "type": "string"
+        },
+        "text": {
+          "maxLength": 1048576,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "locator",
+        "text"
+      ],
+      "title": "SourceSection",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "conflicts": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/ConflictRecord"
+      },
+      "maxItems": 100000,
+      "title": "Conflicts",
+      "type": "array"
+    },
+    "constraints": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Constraint"
+      },
+      "maxItems": 100000,
+      "title": "Constraints",
+      "type": "array"
+    },
+    "entities": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Entity"
+      },
+      "maxItems": 10000,
+      "title": "Entities",
+      "type": "array"
+    },
+    "facts": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Fact"
+      },
+      "maxItems": 100000,
+      "title": "Facts",
+      "type": "array"
+    },
+    "goals": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/GoalTemplate"
+      },
+      "maxItems": 10000,
+      "title": "Goals",
+      "type": "array"
+    },
+    "relations": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Relation"
+      },
+      "maxItems": 10000,
+      "title": "Relations",
+      "type": "array"
+    },
+    "rules": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Rule"
+      },
+      "maxItems": 100000,
+      "title": "Rules",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "sources": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/SourceDocument"
+      },
+      "maxItems": 10000,
+      "title": "Sources",
+      "type": "array"
+    }
+  },
+  "title": "KnowledgeBase",
+  "type": "object"
+}
