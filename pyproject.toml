@@ -1,0 +1,64 @@
+[build-system]
+requires = ["hatchling==1.28.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "llm-expert-system"
+version = "0.1.0"
+description = "Generate safe, versioned Prolog, CLIPS, Z3, and Clingo expert systems from local documents."
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.11,<3.14"
+authors = [{ name = "hevangel" }]
+dependencies = [
+  "fastapi==0.141.1",
+  "httpx==0.28.1",
+  "pydantic==2.13.4",
+  "pydantic-settings==2.15.0",
+  "PyYAML==6.0.3",
+  "typer==0.27.1",
+  "uvicorn[standard]==0.52.4",
+]
+
+[project.optional-dependencies]
+engines = [
+  "clingo==5.8.2",
+  "clipspy==1.0.6",
+  "swiplserver==1.0.2",
+  "z3-solver==4.15.8.0",
+]
+llm = ["litellm==1.98.0"]
+dev = [
+  "mypy==1.18.2",
+  "pytest==8.4.2",
+  "pytest-asyncio==1.2.0",
+  "pytest-cov==7.0.0",
+  "ruff==0.13.3",
+]
+
+[project.scripts]
+llm-expert = "llm_expert_system.cli:app"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/llm_expert_system"]
+
+[tool.pytest.ini_options]
+addopts = "-q --strict-markers"
+testpaths = ["tests"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+ignore = ["B008", "E501", "I001"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+packages = ["llm_expert_system"]
+
+[tool.coverage.run]
+source = ["llm_expert_system"]
+branch = true

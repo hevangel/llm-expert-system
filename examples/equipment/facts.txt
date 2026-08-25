@@ -1,0 +1,3 @@
+fact: temperature(pump_1, hot)
+fact: vibration(pump_1, high)
+fact: operational(pump_1)

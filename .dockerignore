@@ -1,0 +1,14 @@
+.git
+.venv
+.llm-expert
+.smoke-workspace
+.evaluation-workspace*
+.acceptance-workspace*
+node_modules
+web/node_modules
+web/dist
+session_history
+**/__pycache__
+**/.pytest_cache
+**/.mypy_cache
+**/.ruff_cache

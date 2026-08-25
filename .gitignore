@@ -216,3 +216,18 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Node / React
+node_modules/
+web/dist/
+*.tsbuildinfo
+web/coverage/
+web/.vite/
+web/.env.local
+
+# LLM Expert System local workspaces
+.llm-expert/
+.smoke-workspace/
+.evaluation-workspace/
+.evaluation-workspace-*/
+.acceptance-workspace*/

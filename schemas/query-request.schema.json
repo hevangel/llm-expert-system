@@ -1,0 +1,107 @@
+{
+  "$defs": {
+    "Atom": {
+      "additionalProperties": false,
+      "properties": {
+        "arguments": {
+          "default": [],
+          "items": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "boolean"
+              }
+            ]
+          },
+          "maxItems": 16,
+          "title": "Arguments",
+          "type": "array"
+        },
+        "negated": {
+          "default": false,
+          "title": "Negated",
+          "type": "boolean"
+        },
+        "predicate": {
+          "pattern": "^[a-z][a-z0-9_]{0,63}$",
+          "title": "Predicate",
+          "type": "string"
+        }
+      },
+      "required": [
+        "predicate"
+      ],
+      "title": "Atom",
+      "type": "object"
+    },
+    "Capability": {
+      "enum": [
+        "relational",
+        "forward_chaining",
+        "constraint",
+        "optimization",
+        "planning",
+        "non_monotonic"
+      ],
+      "title": "Capability",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "capabilities": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Capability"
+      },
+      "maxItems": 8,
+      "title": "Capabilities",
+      "type": "array"
+    },
+    "goal": {
+      "$ref": "#/$defs/Atom"
+    },
+    "max_results": {
+      "default": 10,
+      "maximum": 1000,
+      "minimum": 1,
+      "title": "Max Results",
+      "type": "integer"
+    },
+    "optimize": {
+      "default": false,
+      "title": "Optimize",
+      "type": "boolean"
+    },
+    "require_models": {
+      "default": false,
+      "title": "Require Models",
+      "type": "boolean"
+    },
+    "require_proof": {
+      "default": false,
+      "title": "Require Proof",
+      "type": "boolean"
+    },
+    "timeout_seconds": {
+      "default": 10,
+      "exclusiveMinimum": 0,
+      "maximum": 300,
+      "title": "Timeout Seconds",
+      "type": "number"
+    }
+  },
+  "required": [
+    "goal"
+  ],
+  "title": "QueryRequest",
+  "type": "object"
+}
